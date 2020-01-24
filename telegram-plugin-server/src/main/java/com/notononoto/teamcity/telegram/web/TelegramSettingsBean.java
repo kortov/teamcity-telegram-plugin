@@ -22,7 +22,7 @@ public class TelegramSettingsBean extends RememberState {
   @StateField
   private boolean useProxy;
   @StateField
-  private Proxy.Type proxyType;
+  private String proxyType;
   @StateField
   private String proxyServer;
   @StateField
@@ -36,7 +36,7 @@ public class TelegramSettingsBean extends RememberState {
     this.botToken = settings.getBotToken();
     this.paused = settings.isPaused();
     this.useProxy = settings.isUseProxy();
-    this.proxyType = settings.getProxyType();
+    this.proxyType = settings.getProxyType().toString();
     this.proxyServer = settings.getProxyServer();
     this.proxyPort = settings.getProxyPort() == null ?
         "" : Integer.toString(settings.getProxyPort());
@@ -81,11 +81,11 @@ public class TelegramSettingsBean extends RememberState {
     this.useProxy = useProxy;
   }
 
-  public Proxy.Type getProxyType() {
+  public String getProxyType() {
     return proxyType;
   }
 
-  public void setProxyType(Proxy.Type proxyType) {
+  public void setProxyType(String proxyType) {
     this.proxyType = proxyType;
   }
 
@@ -134,6 +134,7 @@ public class TelegramSettingsBean extends RememberState {
     settings.setBotToken(botToken);
     settings.setPaused(paused);
     settings.setUseProxy(useProxy);
+    settings.setProxyType(Proxy.Type.valueOf(proxyType));
     settings.setProxyServer(proxyServer);
     settings.setProxyPort(StringUtil.isEmpty(proxyPort) ? null : Integer.valueOf(proxyPort));
     settings.setProxyUsername(proxyUsername);

@@ -45,13 +45,18 @@ public class TelegramBotManager {
 
   private static final Logger LOG = Loggers.SERVER;
 
-  /** Plugin settings */
+  /**
+   * Plugin settings
+   */
   private TelegramSettings settings;
-  /** Request executor */
+  /**
+   * Request executor
+   */
   private volatile TelegramBot bot;
 
   /**
    * Reload bot if settings changed
+   *
    * @param newSettings updated user settings
    */
   public synchronized void reloadIfNeeded(@NotNull TelegramSettings newSettings) {
@@ -60,7 +65,7 @@ public class TelegramBotManager {
       return;
     }
     LOG.debug("New telegram bot token is received: " +
-            StringUtil.truncateStringValueWithDotsAtEnd(newSettings.getBotToken(), 6));
+        StringUtil.truncateStringValueWithDotsAtEnd(newSettings.getBotToken(), 6));
     this.settings = newSettings;
     cleanupBot();
     if (settings.getBotToken() != null && !settings.isPaused()) {
@@ -72,7 +77,8 @@ public class TelegramBotManager {
 
   /**
    * Send message to client
-   * @param chatId client identifier
+   *
+   * @param chatId  client identifier
    * @param message text to send
    */
 
@@ -113,17 +119,17 @@ public class TelegramBotManager {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
     if (settings.isUseProxy()) {
       boolean credentialsAreNotEmpty = !StringUtils.isEmpty(settings.getProxyUsername()) &&
-              !StringUtils.isEmpty(settings.getProxyPassword());
+          !StringUtils.isEmpty(settings.getProxyPassword());
       switch (settings.getProxyType()) {
         case HTTP:
           builder = buildBotWithProxy(settings, builder, Proxy.Type.HTTP);
           if (credentialsAreNotEmpty) {
             builder.proxyAuthenticator((route, response) -> {
               String credential =
-                      Credentials.basic(settings.getProxyUsername(), settings.getProxyPassword());
+                  Credentials.basic(settings.getProxyUsername(), settings.getProxyPassword());
               return response.request().newBuilder()
-                      .header("Proxy-Authorization", credential)
-                      .build();
+                  .header("Proxy-Authorization", credential)
+                  .build();
             });
           }
           break;
@@ -141,10 +147,17 @@ public class TelegramBotManager {
                 return null;
               }
             });
-            break;
           }
+          break;
+        default:
+          createDefaultBot(settings, builder);
       }
     }
+    return createDefaultBot(settings, builder);
+  }
+
+  @NotNull
+  private TelegramBot createDefaultBot(@NotNull TelegramSettings settings, OkHttpClient.Builder builder) {
     return TelegramBotAdapter.buildCustom(settings.getBotToken(), builder.build());
   }
 
@@ -154,7 +167,7 @@ public class TelegramBotManager {
 
   private void addUpdatesListener(TelegramBot bot) {
     bot.setUpdatesListener(updates -> {
-      for (Update update: updates) {
+      for (Update update : updates) {
         Message message = update.message();
         Long chatId = message.chat().id();
         SendMessage msg = new SendMessage(chatId,
@@ -170,10 +183,10 @@ public class TelegramBotManager {
   @NotNull
   private String convertText(String text) throws IOException {
     StringBuffer sb = new StringBuffer();
-    Pattern p = Pattern.compile("(\\w[0x])([\\da-f]{4,5})", Pattern.CASE_INSENSITIVE );
+    Pattern p = Pattern.compile("(\\w[0x])([\\da-f]{4,5})", Pattern.CASE_INSENSITIVE);
     Matcher m = p.matcher(text);
 
-    while(m.find()) {
+    while (m.find()) {
       int hex = Integer.parseInt(m.group(2), 16);
       String s = new String(Character.toChars(hex));
       m.appendReplacement(sb, s);

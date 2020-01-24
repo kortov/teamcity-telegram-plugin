@@ -1,6 +1,7 @@
 <%@ include file="/include.jsp" %>
 <%@ taglib prefix="admin" tagdir="/WEB-INF/tags/admin" %>
 <%@ taglib prefix="forms" tagdir="/WEB-INF/tags/forms" %>
+<%@ taglib prefix="props" tagdir="/WEB-INF/tags/props" %>
 
 <jsp:useBean id="telegramSettings"
              scope="request"
@@ -58,34 +59,51 @@
                     <td><forms:checkbox name="useProxy" checked="${telegramSettings.useProxy}"/>
                 </tr>
                 <tr>
+                    <th><label for="proxyType">Proxy type: </label></th>
+                    <td>
+                        <prop:selectProperty name="proxyType"
+                                             disabled="${!telegramSettings.useProxy}"
+                                             multiple="false">
+                            <prop:option value="HTTP">HTTP</prop:option>
+                            <prop:option value="SOCKS">SOCKS</prop:option>
+                        </prop:selectProperty><br/>
+                        <span class="smallNote">basic HTTP/FTP or SOCKS (V4/V5) proxy</span>
+                    </td>
+                </tr>
+                <tr>
                     <th><label for="proxyServer">Server: </label></th>
                     <td>
-                        <forms:textField name="proxyServer" value="${telegramSettings.proxyServer}"/>
-                        <span class="smallNote">Optional. Provide if proxy enabled.</span>
+                        <forms:textField name="proxyServer"
+                                         disabled="telegramSettings.useProxy"
+                                         value="${telegramSettings.proxyServer}"/>
                         <span class="error" id="errorProxyServer"></span>
                     </td>
                 </tr>
                 <tr>
                     <th><label for="proxyPort">Port: </label></th>
                     <td>
-                        <forms:textField name="proxyPort" value="${telegramSettings.proxyPort}"/>
-                        <span class="smallNote">Optional. Provide if proxy enabled.</span>
+                        <forms:textField name="proxyPort"
+                                         disabled="${!telegramSettings.useProxy}"
+                                         value="${telegramSettings.proxyPort}"/>
                         <span class="error" id="errorProxyPort"></span>
                     </td>
                 </tr>
                 <tr>
                     <th><label for="proxyUsername">Username: </label></th>
                     <td>
-                        <forms:textField name="proxyUsername" value="${telegramSettings.proxyUsername}"/>
-                        <span class="smallNote">Optional. Provide if proxy enabled and requires authentication.</span>
+                        <forms:textField name="proxyUsername"
+                                         disabled="${!telegramSettings.useProxy}"
+                                         value="${telegramSettings.proxyUsername}"/>
+                        <span class="smallNote">Optional. Provide if proxy requires authentication.</span>
                     </td>
                 </tr>
                 <tr>
                     <th><label for="proxyPassword">Password: </label></th>
                     <td>
                         <forms:passwordField name="proxyPassword"
+                                             disabled="${!telegramSettings.useProxy}"
                                              encryptedPassword="${telegramSettings.encryptedProxyPassword}"/>
-                        <span class="smallNote">Optional. Provide if proxy enabled and requires authentication.</span>
+                        <span class="smallNote">Optional. Provide if proxy requires authentication.</span>
                     </td>
                 </tr>
                 <tr class="noBorder">

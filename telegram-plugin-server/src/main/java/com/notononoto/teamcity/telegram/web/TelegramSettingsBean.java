@@ -7,6 +7,8 @@ import jetbrains.buildServer.serverSide.crypt.RSACipher;
 import jetbrains.buildServer.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.Proxy;
+
 /**
  * Telegram settings used on client side
  */
@@ -20,6 +22,8 @@ public class TelegramSettingsBean extends RememberState {
   @StateField
   private boolean useProxy;
   @StateField
+  private Proxy.Type proxyType;
+  @StateField
   private String proxyServer;
   @StateField
   private String proxyPort;
@@ -32,6 +36,7 @@ public class TelegramSettingsBean extends RememberState {
     this.botToken = settings.getBotToken();
     this.paused = settings.isPaused();
     this.useProxy = settings.isUseProxy();
+    this.proxyType = settings.getProxyType();
     this.proxyServer = settings.getProxyServer();
     this.proxyPort = settings.getProxyPort() == null ?
         "" : Integer.toString(settings.getProxyPort());
@@ -74,6 +79,14 @@ public class TelegramSettingsBean extends RememberState {
 
   public void setUseProxy(boolean useProxy) {
     this.useProxy = useProxy;
+  }
+
+  public Proxy.Type getProxyType() {
+    return proxyType;
+  }
+
+  public void setProxyType(Proxy.Type proxyType) {
+    this.proxyType = proxyType;
   }
 
   public String getProxyServer() {

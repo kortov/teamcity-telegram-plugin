@@ -1,5 +1,6 @@
 package com.notononoto.teamcity.telegram.config;
 
+import java.net.Proxy;
 import java.util.Objects;
 
 
@@ -10,6 +11,7 @@ public class TelegramSettings {
   /** Bot state */
   private boolean paused;
   private boolean useProxy;
+  private Proxy.Type proxyType;
   private String proxyServer;
   private Integer proxyPort;
   private String proxyUsername;
@@ -22,6 +24,7 @@ public class TelegramSettings {
     botToken = settings.getBotToken();
     paused = settings.isPaused();
     useProxy = settings.isUseProxy();
+    proxyType = settings.getProxyType();
     proxyServer = settings.getProxyServer();
     proxyPort = settings.getProxyPort();
     proxyUsername = settings.getProxyUsername();
@@ -42,6 +45,14 @@ public class TelegramSettings {
 
   public void setUseProxy(boolean useProxy) {
     this.useProxy = useProxy;
+  }
+
+  public Proxy.Type getProxyType() {
+    return proxyType;
+  }
+
+  public void setProxyType(Proxy.Type proxyType) {
+    this.proxyType = proxyType;
   }
 
   public String getProxyServer() {

@@ -6,9 +6,9 @@ import com.pengrad.telegrambot.TelegramBot;
 import com.pengrad.telegrambot.TelegramBotAdapter;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
-import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.model.Update;
 import com.pengrad.telegrambot.model.User;
+import com.pengrad.telegrambot.model.request.ParseMode;
 import com.pengrad.telegrambot.request.GetMe;
 import com.pengrad.telegrambot.request.SendMessage;
 import com.pengrad.telegrambot.response.GetMeResponse;
@@ -20,10 +20,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.StringUtils;
 
-
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.net.Authenticator;
 import java.net.InetSocketAddress;
+import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -73,7 +73,7 @@ public class TelegramBotManager {
   /**
    * Send message to client
    * @param chatId client identifier
-   * @param message text to send 
+   * @param message text to send
    */
 
   public synchronized void sendMessage(String chatId, @NotNull String message) throws IOException {
@@ -112,20 +112,44 @@ public class TelegramBotManager {
   private TelegramBot createBot(@NotNull TelegramSettings settings) {
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
     if (settings.isUseProxy()) {
-      builder.proxy(new Proxy(Proxy.Type.HTTP,
-          new InetSocketAddress(settings.getProxyServer(), settings.getProxyPort())));
-      if (!StringUtils.isEmpty(settings.getProxyUsername()) &&
-          !StringUtils.isEmpty(settings.getProxyPassword())) {
-        builder.proxyAuthenticator((route, response) -> {
-          String credential =
-              Credentials.basic(settings.getProxyUsername(), settings.getProxyPassword());
-          return response.request().newBuilder()
-              .header("Proxy-Authorization", credential)
-              .build();
-        });
+      boolean credentialsAreNotEmpty = !StringUtils.isEmpty(settings.getProxyUsername()) &&
+              !StringUtils.isEmpty(settings.getProxyPassword());
+      switch (settings.getProxyType()) {
+        case HTTP:
+          builder = buildBotWithProxy(settings, builder, Proxy.Type.HTTP);
+          if (credentialsAreNotEmpty) {
+            builder.proxyAuthenticator((route, response) -> {
+              String credential =
+                      Credentials.basic(settings.getProxyUsername(), settings.getProxyPassword());
+              return response.request().newBuilder()
+                      .header("Proxy-Authorization", credential)
+                      .build();
+            });
+          }
+          break;
+        case SOCKS:
+          builder = buildBotWithProxy(settings, builder, Proxy.Type.SOCKS);
+          if (credentialsAreNotEmpty) {
+            Authenticator.setDefault(new Authenticator() {
+              @Override
+              protected PasswordAuthentication getPasswordAuthentication() {
+                if (getRequestingHost().equalsIgnoreCase(settings.getProxyServer())) {
+                  if (settings.getProxyPort() == getRequestingPort()) {
+                    return new PasswordAuthentication(settings.getProxyUsername(), settings.getProxyPassword().toCharArray());
+                  }
+                }
+                return null;
+              }
+            });
+            break;
+          }
       }
     }
     return TelegramBotAdapter.buildCustom(settings.getBotToken(), builder.build());
+  }
+
+  private OkHttpClient.Builder buildBotWithProxy(@NotNull TelegramSettings settings, OkHttpClient.Builder builder, Proxy.Type http) {
+    return builder.proxy(new Proxy(http, new InetSocketAddress(settings.getProxyServer(), settings.getProxyPort())));
   }
 
   private void addUpdatesListener(TelegramBot bot) {

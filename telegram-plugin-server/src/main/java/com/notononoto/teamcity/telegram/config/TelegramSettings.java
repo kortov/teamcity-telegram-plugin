@@ -102,6 +102,7 @@ public class TelegramSettings {
     TelegramSettings that = (TelegramSettings) o;
     return useProxy == that.useProxy &&
             paused == that.paused &&
+            proxyType == that.proxyType &&
             Objects.equals(botToken, that.botToken) &&
             Objects.equals(proxyServer, that.proxyServer) &&
             Objects.equals(proxyPort, that.proxyPort) &&
@@ -111,7 +112,7 @@ public class TelegramSettings {
 
   @Override
   public int hashCode() {
-    return Objects.hash(botToken, useProxy, proxyServer, proxyPort,
+    return Objects.hash(botToken, useProxy, proxyType, proxyServer, proxyPort,
             proxyUsername, proxyPassword, paused);
   }
 }

@@ -61,11 +61,16 @@
                 <tr>
                     <th><label for="proxyType">Proxy type: </label></th>
                     <td>
-                        <forms:radioButton name="proxyType" id="proxyTypeHttp" value="${telegramSettings.proxyType}" title="HTTP"/>
-                        <label for="proxyTypeHttp">HTTP</label>
-                        <forms:radioButton name="proxyType" id="proxyTypeSocks" value="${telegramSettings.proxyType}" title="SOCKS"/>
+                        <forms:radioButton name="proxyType" id="proxyTypeDirect"
+                                           onclick="${telegramSettings.proxyType} = 'DIRECT'" title="DIRECT"/>
+                        <label for="proxyTypeDirect">NONE</label>
+                        <forms:radioButton name="proxyType" id="proxyTypeSocks" value="${telegramSettings.proxyType}"
+                                           onclick="${telegramSettings.proxyType} = 'HTTP'" title="HTTP"/>
+                        <label for="proxyTypeSocks">HTTP</label>
+                        <forms:radioButton name="proxyType" id="proxyTypeSocks" value="${telegramSettings.proxyType}"
+                                           onclick="${telegramSettings.proxyType} = 'SOCKS'" title="SOCKS"/>
                         <label for="proxyTypeSocks">SOCKS</label>
-                        <span class="smallNote">basic HTTP/FTP or SOCKS (V4/V5) proxy</span>
+                        <span class="smallNote">No proxy, Basic HTTP/FTP or SOCKS (V4/V5) proxy.</span>
                         <span class="error" id="errorProxyType"></span>
                     </td>
                 </tr>

@@ -7,6 +7,7 @@ services:
     volumes:
       - ./data_dir:/data/teamcity_server/datadir
       - ./log_dir:/opt/teamcity/logs
+      - ./plugin_resources_dir:/opt/teamcity/webapps/ROOT/plugins/telegram-plugin-notifier
   teamcity-agent:
     image: jetbrains/teamcity-agent
     environment:

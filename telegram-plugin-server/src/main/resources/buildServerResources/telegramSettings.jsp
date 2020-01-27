@@ -9,11 +9,11 @@
 <bs:linkCSS dynamic="${true}">
     /css/admin/adminMain.css
     /css/admin/serverConfig.css
-    /plugins/telegram-plugin/css/telegramSettings.css
+    /plugins/telegram-plugin-notifier/css/telegramSettings.css
 </bs:linkCSS>
 <bs:linkScript>
     /js/bs/testConnection.js
-    /plugins/telegram-plugin/js/telegramSettings.js
+    /plugins/telegram-plugin-notifier/js/telegramSettings.js
 </bs:linkScript>
 <script type="text/javascript">
     $j(function() {
@@ -61,9 +61,6 @@
                 <tr>
                     <th><label for="proxyType">Proxy type: </label></th>
                     <td>
-                        <forms:radioButton name="proxyType" id="proxyTypeDirect" checked="${telegramSettings.proxyType == 'DIRECT'}"
-                                           value="DIRECT" title="NONE"/>
-                        <label for="proxyTypeDirect">NONE</label>
                         <forms:radioButton name="proxyType" id="proxyTypeHttp" checked="${telegramSettings.proxyType == 'HTTP'}"
                                            value="HTTP" title="HTTP"/>
                         <label for="proxyTypeHttp">HTTP</label>

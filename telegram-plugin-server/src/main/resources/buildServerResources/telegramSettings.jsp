@@ -16,6 +16,17 @@
     /plugins/telegram-plugin-notifier/js/telegramSettings.js
 </bs:linkScript>
 <script type="text/javascript">
+    function onUseProxyChange() {
+        var useProxy = $(#"useProxy").checked;
+        if (useProxy) {
+            console.log("a");
+            BS.Util.show(".useProxyDependent");
+        } else {
+            console.log("b");
+            BS.Util.hide(".useProxyDependent");
+        }
+    }
+
     $j(function() {
         Telegram.SettingsForm.setupEventHandlers();
     });
@@ -56,9 +67,10 @@
                 </tr>
                 <tr>
                     <th><label for="useProxy">Use proxy: </label></th>
-                    <td><forms:checkbox name="useProxy" checked="${telegramSettings.useProxy}"/>
+                    <td><forms:checkbox name="useProxy" onclick="onUseProxyChange();"
+                                        checked="${telegramSettings.useProxy}"/>
                 </tr>
-                <tr>
+                <tr class="useProxyDependent">
                     <th><label for="proxyType">Proxy type: </label></th>
                     <td>
                         <forms:radioButton name="proxyType" id="proxyTypeHttp" checked="${telegramSettings.proxyType == 'HTTP'}"

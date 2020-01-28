@@ -16,6 +16,17 @@ Telegram.SettingsForm = OO.extend(BS.AbstractPasswordForm, {
         });
     },
 
+    onUseProxyChange: function() {
+    var useProxy = $(#"useProxy").checked;
+    if (useProxy) {
+        console.log("a");
+        BS.Util.show(".useProxyDependent");
+    } else {
+        console.log("b");
+        BS.Util.hide(".useProxyDependent");
+    }
+},
+
     /** This method required for teamcity javascript events support (data changed and etc) */
     storeInSession: function() {
         $("submitSettings").value = 'storeInSession';

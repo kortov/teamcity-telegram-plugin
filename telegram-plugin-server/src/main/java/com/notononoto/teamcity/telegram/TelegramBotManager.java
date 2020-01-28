@@ -3,7 +3,6 @@ package com.notononoto.teamcity.telegram;
 import com.intellij.openapi.diagnostic.Logger;
 import com.notononoto.teamcity.telegram.config.TelegramSettings;
 import com.pengrad.telegrambot.TelegramBot;
-import com.pengrad.telegrambot.TelegramBotAdapter;
 import com.pengrad.telegrambot.UpdatesListener;
 import com.pengrad.telegrambot.model.Message;
 import com.pengrad.telegrambot.model.Update;
@@ -122,7 +121,7 @@ public class TelegramBotManager {
           !StringUtils.isEmpty(settings.getProxyPassword());
       switch (settings.getProxyType()) {
         case HTTP:
-          builder = buildBotWithProxy(settings, builder, Proxy.Type.HTTP);
+          builder = okhttpBuilderWithProxy(settings, builder, Proxy.Type.HTTP);
           if (credentialsAreNotEmpty) {
             builder.proxyAuthenticator((route, response) -> {
               String credential =
@@ -134,7 +133,7 @@ public class TelegramBotManager {
           }
           break;
         case SOCKS:
-          builder = buildBotWithProxy(settings, builder, Proxy.Type.SOCKS);
+          builder = okhttpBuilderWithProxy(settings, builder, Proxy.Type.SOCKS);
           if (credentialsAreNotEmpty) {
             Authenticator.setDefault(new Authenticator() {
               @Override
@@ -150,18 +149,18 @@ public class TelegramBotManager {
           }
           break;
         default:
-          createDefaultBot(settings, builder);
+          createBot(settings, builder);
       }
     }
-    return createDefaultBot(settings, builder);
+    return createBot(settings, builder);
   }
 
   @NotNull
-  private TelegramBot createDefaultBot(@NotNull TelegramSettings settings, OkHttpClient.Builder builder) {
-    return TelegramBotAdapter.buildCustom(settings.getBotToken(), builder.build());
+  private TelegramBot createBot(@NotNull TelegramSettings settings, OkHttpClient.Builder builder) {
+    return new TelegramBot.Builder(settings.getBotToken()).okHttpClient(builder.build()).build();
   }
 
-  private OkHttpClient.Builder buildBotWithProxy(@NotNull TelegramSettings settings, OkHttpClient.Builder builder, Proxy.Type http) {
+  private OkHttpClient.Builder okhttpBuilderWithProxy(@NotNull TelegramSettings settings, OkHttpClient.Builder builder, Proxy.Type http) {
     return builder.proxy(new Proxy(http, new InetSocketAddress(settings.getProxyServer(), settings.getProxyPort())));
   }
 

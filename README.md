@@ -25,6 +25,8 @@ So when Teamcity is running send **any** message to bot. Response should
 contains you chat id. Add that chat id under profile page.
 ![profile page](/images/profile_page.png?raw=true)
 
+### Docker for development
+I added docker-compose.yml bla-bla
 ## TODO
 1. This sources contains freemarker templates from Teamcity Jabber plugin.
    Maybe it violates license. Anybody can view and edit this resources.

@@ -121,7 +121,6 @@ public class TelegramBotManager {
           !StringUtils.isEmpty(settings.getProxyPassword());
       switch (settings.getProxyType()) {
         case HTTP:
-          builder = okhttpBuilderWithProxy(settings, builder, Proxy.Type.HTTP);
           if (credentialsAreNotEmpty) {
             builder.proxyAuthenticator((route, response) -> {
               String credential =
@@ -133,8 +132,9 @@ public class TelegramBotManager {
           }
           break;
         case SOCKS:
-          builder = okhttpBuilderWithProxy(settings, builder, Proxy.Type.SOCKS);
           if (credentialsAreNotEmpty) {
+            builder.proxy(new Proxy(
+                Proxy.Type.SOCKS, new InetSocketAddress(settings.getProxyServer(), settings.getProxyPort())));
             Authenticator.setDefault(new Authenticator() {
               @Override
               protected PasswordAuthentication getPasswordAuthentication() {
@@ -148,6 +148,7 @@ public class TelegramBotManager {
             });
           }
           break;
+        case DIRECT:
         default:
           createBot(settings, builder);
       }
@@ -158,10 +159,6 @@ public class TelegramBotManager {
   @NotNull
   private TelegramBot createBot(@NotNull TelegramSettings settings, OkHttpClient.Builder builder) {
     return new TelegramBot.Builder(settings.getBotToken()).okHttpClient(builder.build()).build();
-  }
-
-  private OkHttpClient.Builder okhttpBuilderWithProxy(@NotNull TelegramSettings settings, OkHttpClient.Builder builder, Proxy.Type http) {
-    return builder.proxy(new Proxy(http, new InetSocketAddress(settings.getProxyServer(), settings.getProxyPort())));
   }
 
   private void addUpdatesListener(TelegramBot bot) {

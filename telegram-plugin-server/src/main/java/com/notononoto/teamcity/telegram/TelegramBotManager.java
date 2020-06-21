@@ -172,12 +172,15 @@ public class TelegramBotManager {
     bot.setUpdatesListener(updates -> {
       for (Update update : updates) {
         Message message = update.message();
-        Long chatId = message.chat().id();
-        SendMessage msg = new SendMessage(chatId,
-            "Hello! Your chat id is '" + chatId + "'.\n" +
-                "If you want to receive notifications about Teamcity events " +
-                "please add this chat id in your Teamcity settings");
-        bot.execute(msg);
+        String messageText = message.text();
+        if ("/start".equals(messageText) ) {
+          Long chatId = message.chat().id();
+          SendMessage msg = new SendMessage(chatId,
+                  "Hello! Your chat id is '" + chatId + "'.\n" +
+                          "If you want to receive notifications about Teamcity events " +
+                          "please add this chat id in your Teamcity settings");
+          bot.execute(msg);
+        }
       }
       return UpdatesListener.CONFIRMED_UPDATES_ALL;
     });

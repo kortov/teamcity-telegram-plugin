@@ -173,7 +173,7 @@ public class TelegramBotManager {
       for (Update update : updates) {
         Message message = update.message();
         String messageText = message.text();
-        if ("/start".equals(messageText) ) {
+        if (messageText != null && messageText.startsWith("/start")) {
           Long chatId = message.chat().id();
           SendMessage msg = new SendMessage(chatId,
                   "Hello! Your chat id is '" + chatId + "'.\n" +
